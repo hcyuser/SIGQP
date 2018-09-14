@@ -1,9 +1,6 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import org.jgrapht.*;
-import org.jgrapht.alg.interfaces.MatchingAlgorithm.Matching;
-import org.jgrapht.alg.interfaces.MatchingAlgorithm.MatchingImpl;
+import org.jgrapht.alg.interfaces.MatchingAlgorithm.*;
 import org.jgrapht.graph.*;
 
 public class MSC {
@@ -14,10 +11,40 @@ public class MSC {
 			for(Integer aa: a.interest) {
 				System.out.print(aa+":");
 			}
-			System.out.println(":::::");
+			System.out.println("");
 		}
 
 	}
+
+	public void see(Set<User> set) {
+		if( set == null ) {
+			System.out.println( "This set is null" );
+			return;
+		}
+		for(User a: set) {
+			for(Integer aa: a.interest) {
+				System.out.print(aa+":");
+			}
+			System.out.println("#");
+		}
+			System.out.println("-----------------------");
+	}
+	public void see(User a) {
+		if( a == null ) {
+			System.out.println( "This user is null" );
+			return;
+		}
+		for(Integer aa: a.interest) {
+			System.out.print(aa+":");
+		}
+		System.out.println("");
+	}
+	public void isee( Set<Integer> set ) {
+		for( Integer i: set )
+			System.out.print( i + ":" );
+		System.out.println( "#" );
+	}
+
 	public Set<User> main(Set<User> set) {
 
 		if(set.size()==0) {
@@ -28,7 +55,7 @@ public class MSC {
 
 		Set<User> unique = UniqueElement(set);
 		if( unique.size() > 0 ) {
-			set.removeAll(unique);
+			set = delete( set, unique );
 			unique.addAll(main(set));
 			return unique;
 		}
@@ -41,10 +68,8 @@ public class MSC {
 
 		set.remove(label);
 		Set<User> a = main(set);
-		for( User user: set ) {
-			user.interest.removeAll(label.interest);
-		}
-		Set<User> b = main( set );
+		set = delete( set, new HashSet<User>( Collections.singleton( label ) ) );
+		Set<User> b = main(set);
 		if( a.size() < 1 + b.size() )
 			return a;
 		else
@@ -76,14 +101,14 @@ public class MSC {
 				return false;
 			}
 		}
-
 		return true;
-
 	}
+
 	public Set<User> UniqueElement(Set<User> InputUser) {
-		ArrayList<User> ForOutput = new ArrayList<>();
 		Set<Integer> UniqueInterest = new HashSet<>();
 		Set<Integer> DualInterest= new HashSet<>();
+		Set<User> OutputUser = new HashSet<>();
+
 		for(User a: InputUser) {
 			for(Integer aa: a.interest) {
 				if(!UniqueInterest.contains(aa)) {
@@ -96,18 +121,33 @@ public class MSC {
 		UniqueInterest.removeAll(DualInterest);
 		for(User a: InputUser) {
 			for(Integer aa: a.interest) {
-				if(UniqueInterest.contains(aa) && !ForOutput.contains(a)) {
-					ForOutput.add(a);
+				if(UniqueInterest.contains(aa) && !OutputUser.contains(a)) {
+					OutputUser.add(a);
 				}
 			}
 		}
-		Set<User> OutputUser = new HashSet<>();
-		for(User a: ForOutput) {
-			OutputUser.add(a);
-		}
 		return OutputUser;
-
 	}
+
+	public Set<User> delete( Set<User> user, Set<User> uniq ) {
+		Set<User> ret = new HashSet<>();
+		Set<Integer> element = new HashSet<>();
+
+		for( User u: uniq )
+			for( Integer i: u.interest )
+				element.add( i );
+		for( User u: user ) {
+			User n = new User();
+			for( Integer i: u.interest )
+				if( !element.contains( i ) )
+					n.interest.add( i );
+			if( n.interest.size() > 0 )
+				ret.add( n );
+		}
+
+		return ret;
+	}
+
 	public User ChooseMaxSizeUser(Set<User> InputUser) {
 		User max = null;
 		int size=0;
