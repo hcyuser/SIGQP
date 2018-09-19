@@ -3,8 +3,8 @@ import org.jgrapht.*;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm.*;
 import org.jgrapht.graph.*;
 
-public class MSC {
-	MSC(ArrayList<User> input){
+public class MSC_distance {
+	MSC_distance(ArrayList<User> input){
 		Set<User> set = new HashSet<User>(input);
 		see(set);
 		Set<User> OutputUser = main(set);
@@ -21,9 +21,10 @@ public class MSC {
 			for(Integer aa: a.interest) {
 				System.out.print(aa+":");
 			}
-			System.out.println("#");
+
+			System.out.println("#"+a.x+"::"+a.y+"#");
 		}
-			System.out.println("-----------------------");
+		System.out.println("-----------------------");
 	}
 	public void see(User a) {
 		if( a == null ) {
@@ -66,10 +67,25 @@ public class MSC {
 		Set<User> a = main(set);
 		set = delete( set, new HashSet<User>( Collections.singleton( label ) ) );
 		Set<User> b = main(set);
-		if( a.size() < 1 + b.size() )
-			return a;
+
+		if( a.size() != 1 + b.size() )
+			return a.size() < 1 + b.size()? a : b;
 		else
-			return b;
+			return CountDistance( a ) < CountDistance( b )? a : b;
+	}
+	
+	public double CountDistance(Set<User> InputUser) {
+		double max=0;
+		for(User a: InputUser) {
+			for(User b: InputUser) {
+				double trial = Math.pow(Math.pow(a.x-b.x, 2)+Math.pow(a.y-b.y, 2),(0.5));
+				if(trial>max) {
+					max = trial;
+				}
+			}
+
+		}
+		return max;
 	}
 
 	public Set<User> DelSubUser(Set<User> InputUser) {
@@ -160,7 +176,7 @@ public class MSC {
 
 		Graph<Integer, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
 		Set<User> OutputUser = new HashSet<User>();
-		
+
 		for(User a: InputUser) {
 			Integer[] arr = new Integer[a.interest.size()];
 			System.arraycopy(a.interest.toArray(), 0, arr, 0, a.interest.size()); 
@@ -168,9 +184,9 @@ public class MSC {
 			g.addVertex(arr[1]);
 			g.addEdge(arr[0], arr[1]);
 		}
-		
+
 		MatchingImpl m = new MatchingImpl(g,g.edgeSet(),0);
-		
+
 		if(m.isPerfect()) {
 			for(User a:InputUser) {
 				OutputUser.add(a);

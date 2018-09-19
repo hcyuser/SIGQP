@@ -53,7 +53,7 @@ public class Main {
 			set.retainAll(rag.getGoal());
 			System.out.println((double)set.size()/gr.getGoal().size());
 			experiment = experiment+(double)set.size()/gr.getGoal().size();*/
-			ArrayList<User> presentUser2 = new ArrayList<>();
+			/*ArrayList<User> presentUser2 = new ArrayList<>();
 			User t1 = new User();
 			t1.interest.add(1);
 			t1.interest.add(2);
@@ -72,7 +72,24 @@ public class Main {
 			presentUser2.add(t3);
 			presentUser2.add(t4);
 
-			MSC msc = new MSC(new ArrayList<>(presentUser2));
+			MSC msc = new MSC(new ArrayList<>(presentUser2));*/
+			
+			ArrayList<User> presentUser3 = new ArrayList<>();
+			User u1 = new User();
+			u1.interest.add(1);
+			u1.x = 0;
+			u1.y = 0;
+			User u2 = new User();
+			u2.interest.add(2);
+			u2.x = 0;
+			u2.y = 0;
+			User u3 = new User();
+			u3.interest.add(2);
+			u3.x = 5;
+			u3.y = 6;
+			presentUser3.add(u1);
+			presentUser3.add(u2);
+			MSC_distance msc_distance = new MSC_distance(new ArrayList<>(presentUser3));
 	
 			
 			
