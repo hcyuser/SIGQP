@@ -13,6 +13,6 @@ public class User {
 		return n;
 	}
 	public boolean equals( User u ) {
-		return u.interest.equals( this.interest );
+		return u.interest.equals( this.interest ) && u.id==this.id;
 	}
 }

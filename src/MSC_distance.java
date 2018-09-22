@@ -6,9 +6,9 @@ import org.jgrapht.graph.*;
 public class MSC_distance {
 	MSC_distance(ArrayList<User> input){
 		Set<User> set = new HashSet<User>(input);
-		see(set);
+		//see(set);
 		Set<User> OutputUser = main(set);
-		see(OutputUser);
+		//see(OutputUser);
 
 	}
 
@@ -34,6 +34,7 @@ public class MSC_distance {
 		for(Integer aa: a.interest) {
 			System.out.print(aa+":");
 		}
+		System.out.println("#"+a.x+"::"+a.y+"#");
 		System.out.println("");
 	}
 	public void isee( Set<Integer> set ) {
@@ -47,16 +48,19 @@ public class MSC_distance {
 		if(set.size()==0) {
 			return new HashSet<User>();
 		}
-
+		
 		set = DelSubUser(set);
-
+		
 		Set<User> unique = UniqueElement(set);
 		if( unique.size() > 0 ) {
 			set = delete( set, unique );
 			unique.addAll(main(set));
 			return unique;
 		}
-
+		
+		if(set.size()==0) {
+			return new HashSet<User>();
+		}
 		User label = ChooseMaxSizeUser(set);
 
 		if( label.interest.size()==2) {
@@ -73,7 +77,7 @@ public class MSC_distance {
 		else
 			return CountDistance( a ) < CountDistance( b )? a : b;
 	}
-	
+
 	public double CountDistance(Set<User> InputUser) {
 		double max=0;
 		for(User a: InputUser) {
@@ -90,7 +94,17 @@ public class MSC_distance {
 
 	public Set<User> DelSubUser(Set<User> InputUser) {
 		Set<User> ForDelete = new HashSet<>();
-		for(User a: InputUser) {
+		User[] InList = InputUser.toArray(new User[InputUser.size()]);
+		
+		for( int i = 0; i < InList.length; ++i )
+			for( int j = i + 1; j < InList.length; ++j )
+			{
+				if( isSubSet( InList[ i ].interest, InList[ j ].interest ) )
+					ForDelete.add( InList[ j ] );
+				else if( isSubSet( InList[ j ].interest, InList[ i ].interest ) )
+					ForDelete.add( InList[ i ] );
+			}
+		/*for(User a: InputUser) {
 			for(User b: InputUser) {
 				if(isSubSet(a.interest,b.interest)&& !a.equals(b)) {
 					if(!ForDelete.contains(b)) {
@@ -99,7 +113,7 @@ public class MSC_distance {
 					}
 				}
 			}
-		}
+		}*/
 		for(User del: ForDelete) {
 			InputUser.remove(del);
 		}
@@ -150,6 +164,9 @@ public class MSC_distance {
 				element.add( i );
 		for( User u: user ) {
 			User n = new User();
+			n.x = u.x;
+			n.y = u.y;
+			n.id = u.id;
 			for( Integer i: u.interest )
 				if( !element.contains( i ) )
 					n.interest.add( i );
@@ -161,10 +178,11 @@ public class MSC_distance {
 	}
 
 	public User ChooseMaxSizeUser(Set<User> InputUser) {
+		
 		User max = null;
 		int size=0;
 		for(User user: InputUser) {
-			if(user.interest.size()>size) {
+			if(user.interest.size()>=size) {
 				size = user.interest.size();
 				max = user;
 			}
@@ -181,8 +199,11 @@ public class MSC_distance {
 			Integer[] arr = new Integer[a.interest.size()];
 			System.arraycopy(a.interest.toArray(), 0, arr, 0, a.interest.size()); 
 			g.addVertex(arr[0]);
-			g.addVertex(arr[1]);
-			g.addEdge(arr[0], arr[1]);
+			if(true||arr.length!=1) {
+				g.addVertex(arr[1]);
+				g.addEdge(arr[0], arr[1]);
+			}
+
 		}
 
 		MatchingImpl m = new MatchingImpl(g,g.edgeSet(),0);
@@ -223,4 +244,5 @@ public class MSC_distance {
 		}
 		return OutputUser;
 	}
+	
 }
